@@ -45,9 +45,10 @@ class API:
 
     def save(self, name, path, params):
         params |= self.__default_params
+        response = self.__endpoints.get(name).get(params=params)
+        lines = response.text.split('\n')
         with open(path, 'w', encoding='utf-8') as output_file:
-            response = self.__endpoints.get(name).get(params=params)
-            output_file.writelines(response.text)
+            output_file.writelines('\n'.join(lines[5:]))
 
 
 def main():
@@ -71,8 +72,6 @@ def main():
 
     with API(**kwargs) as api:
         api.save('relay_users', data_dir / 'relay_users.csv', params={
-            'start': '2021-08-10',
-            'end': '2021-11-16',
             'country': 'all',
             'events': 'off'
         })
